@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+    	<base href="./" /> 
         <title>Mongo Map</title>
         <link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.css" />
     	<link rel="stylesheet" type="text/css" href="style.css" />
@@ -9,12 +10,18 @@
         <script src="node_modules/angular-ui-router/release/angular-ui-router.js"></script>
         <script src="node_modules/angular-bootstrap/dist/ui-bootstrap.js"></script>
         <script src="js/app.js"></script>
-        <script src="js/home/home.js"></script>
-        <!-- wonder if this is good practice -->
-        <!-- <base href="/" /> -->
+        <script src="js/main/main.js"></script> 
+        <script src="js/factories/mongoDbFactory.js"></script>
+
     </head>
     <body ng-app="MongoMapApp">
 
     <div ui-view></div>
+    
+    <!-- <div ui-view="main"></div> -->
+    <!-- <div ui-view="main.top-view" class="topView"></div>
+    <hr style="background-color: #000000; height:2px;">
+    <div ui-view="main.bottom-view" class="bottomView"></div> -->
+
     </body>
 </html>

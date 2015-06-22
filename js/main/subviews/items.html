@@ -1,0 +1,10 @@
+<h1>Items</h1>
+
+<div ng-repeat="item in items">
+	<div ng-click="modifyProp(key, val)" ng-repeat="(key,val) in item">
+		<span> {{ key }}: </span>
+		<span> {{ val }} </span>
+	</div>
+</div>
+
+<ui-view></ui-view>
