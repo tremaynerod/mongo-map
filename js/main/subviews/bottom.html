@@ -1,7 +1,10 @@
-
 <h1>Collections</h1>
-<div ng-click="useCollection(collection)" ng-repeat="collection in collections">
-	<span> {{ collection.name }} </span>
+
+<h4 ng-if="displayMessage">{{displayMessage}}</h4>
+
+<div ng-repeat="collection in collections">
+	<span ng-click="useCollection(collection)"> {{ collection.name }} </span> 
+	<button ng-click="deleteCollection(collection)">Delete</button>
 </div>
 
 <ui-view></ui-view>

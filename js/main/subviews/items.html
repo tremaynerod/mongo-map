@@ -1,9 +1,18 @@
 <h1>Items</h1>
 
-<div ng-repeat="item in items">
-	<div ng-click="modifyProp(key, val)" ng-repeat="(key,val) in item">
+<h4 ng-if="displayMessage">{{displayMessage}}</h4>
+
+<div class="input-group">
+  <span class="input-group-addon"><i class="fa fa-search"></i></span>
+  <input ng-model="query" id="search" class="form-control" type="text" placeholder="Search Collection...">
+</div>
+
+<div ng-repeat="item in items | filter: query">
+	<button ng-click="deleteItem(item)">Remove Item</button>
+	<div ng-repeat="(key, val) in item">
 		<span> {{ key }}: </span>
-		<span> {{ val }} </span>
+		<input ng-model="val" /><button ng-click="modifyProp(key, val, item)">Apply Change</button> 
+		<button ng-click="deleteProp(key, val, item)">Delete</button>
 	</div>
 </div>
 

@@ -6,3 +6,16 @@
 
 .bottomViewView {
   height: 50vh; }
+
+h1 {
+  color: blue; }
+
+span {
+  color: blue;
+  text-align: center;
+  display: inline-block;
+  width: 200px;
+  height: 25px; }
+
+body {
+  background-color: #DDCCFF; }

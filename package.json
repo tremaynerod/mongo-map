@@ -15,5 +15,9 @@
     "bluebird": "^2.9.30",
     "bootstrap": "^3.3.5",
     "mongodb": "^2.0.34"
-  }
+  }//,
+  // "window": {
+  //   "toolbar": false,
+  //   "frame": false
+  // }
 }

@@ -1,21 +1,10 @@
-<!-- <h1>Main</h1> -->
+<h1>Databases</h1>
 
-<!-- <frame>
-	<div ui-view="top-view" class="topView"></div>	
-</frame>
-<hr style="background-color: #000000; height:2px;">
-<frame>
-	<div ui-view="bottom-view" class="bottomView"></div>
-</frame>
- -->
+<h4 ng-if="displayMessage">{{displayMessage}}</h4>
 
-<h1>Table</h1>
-
-<div ng-click="useDatabase(db)" ng-repeat="db in dbsArr">
-
-<!-- <div ui-sref=".test" ng-click="useDatabase(db)" ng-repeat="db in dbsArr"> -->
-	<span> {{ db.name }} </span>
-	<span> {{ db.sizeOnDisk }} </span>
+<div ng-repeat="db in dbsArr">
+	<span ng-click="useDatabase(db)"> {{ db.name }} </span>
+	<button ng-click="deleteDatabase(db)" class="btn btn-primary">Delete</button>
 </div>
 
 <ui-view></ui-view>
