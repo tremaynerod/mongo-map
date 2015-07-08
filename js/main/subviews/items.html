@@ -1,19 +1,32 @@
-<h1>Items</h1>
+<div class="contain">
+	<button ng-click="goToCollections()" class="btn btn-warning">Collections</button>
 
-<h4 ng-if="displayMessage">{{displayMessage}}</h4>
+	<h4 ng-if="!exportPathObj" class="importDatabaseLabel">Export Collection</h4>
+    <input type="file" class="fileInput" webkitdirectory directory  custom-on-change="filePathChanged"/>
 
-<div class="input-group">
-  <span class="input-group-addon"><i class="fa fa-search"></i></span>
-  <input ng-model="query" id="search" class="form-control" type="text" placeholder="Search Collection...">
-</div>
 
-<div ng-repeat="item in items | filter: query">
-	<button ng-click="deleteItem(item)">Remove Item</button>
-	<div ng-repeat="(key, val) in item">
-		<span> {{ key }}: </span>
-		<input ng-model="val" /><button ng-click="modifyProp(key, val, item)">Apply Change</button> 
-		<button ng-click="deleteProp(key, val, item)">Delete</button>
+	<button ng-if="exportPathObj" ng-click="exportCollection(exportPathObj)" class="btn btn-danger exportButton">Export: {{exportPathObj.name.substr(0,10)}}</button>
+	
+
+
+	<h1>Items</h1>
+
+	<h4 ng-if="displayMessage" class="message">{{displayMessage}}</h4>
+
+	<div class="input-group">
+	  <span class="input-group-addon"><i class="fa fa-search"></i></span>
+	  <input ng-model="query" id="search" class="form-control" type="text" placeholder="Search Collection...">
 	</div>
-</div>
+
+	<div ng-repeat="item in items | filter: query">
+		<div ng-repeat="(key, val) in item">
+			<span> {{ key }}: </span>
+			<input ng-model="val" />
+			<button ng-click="modifyProp(key, val, item)" class="btn btn-success">Apply Change</button> 
+			<button ng-click="deleteProp(key, val, item)" class="btn btn-danger">Delete</button>
+		</div>
+		<button ng-click="deleteItem(item)" class="btn btn-danger">Remove Item</button>
+	</div>
+<div>
 
 <ui-view></ui-view>

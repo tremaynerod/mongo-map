@@ -1,10 +1,33 @@
-<h1>Databases</h1>
+<div class="contain">
+	<h1>Databases</h1>
 
-<h4 ng-if="displayMessage">{{displayMessage}}</h4>
+    
 
-<div ng-repeat="db in dbsArr">
-	<span ng-click="useDatabase(db)"> {{ db.name }} </span>
-	<button ng-click="deleteDatabase(db)" class="btn btn-primary">Delete</button>
-</div>
+	<h4 ng-if="!importPathObj" class="importDatabaseLabel">Import Database</h4>
+    <input type="file" class="fileInput" webkitdirectory directory  custom-on-change="filePathChanged"/>
+    
+
+
+
+
+
+
+	<!-- <select ng-model="importName" class="importInput" /><option ng-repeat="export in exports">{{export}}</option></select> -->
+	<button ng-if="importPathObj" ng-click="importDatabase(importPathObj)" class="btn btn-danger importButton">Import: {{importPathObj.name.substr(0,10)}}</button>
+
+
+
+	<h4 ng-if="displayMessage" class="message">{{displayMessage}}</h4>
+
+  
+	<div ng-repeat="db in dbsArr">
+
+		<span ng-click="useDatabase(db)"> {{ db.name }} </span>
+
+		<button ng-click="deleteDatabase(db)" class="btn btn-danger">Delete</button>
+
+	</div>
+<div>
+
 
 <ui-view></ui-view>

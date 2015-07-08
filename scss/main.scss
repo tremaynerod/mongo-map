@@ -9,7 +9,7 @@
     clear: both;
   }
 }
-
+//sass --watch scss/main.scss:style.css
 @import 'scss/topView/main';
 @import 'scss/bottomView/main';
 @import 'scss/main/main';

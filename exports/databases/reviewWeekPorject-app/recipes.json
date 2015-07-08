@@ -1,0 +1,5 @@
+{"__v":0,"_id":{"$oid":"556e050ef5f914df4714f3cc"},"recipeStructure":[]}
+{"__v":0,"_id":{"$oid":"556e05599280e63048f18a29"},"recipeName":"Test Recipe","recipeStructure":[]}
+{"__v":0,"_id":{"$oid":"556e08f85b0558084cee96fe"},"recipeCreator":"Test Creator","recipeName":"Test Name","recipeStructure":[]}
+{"__v":0,"_id":{"$oid":"556e0928939ada3c4ccd8511"},"recipeCreator":"Test Creator","recipeName":"Test Name","recipeStructure":[{"_id":{"$oid":"556e0928939ada3c4ccd8512"},"structure":[{"_id":{"$oid":"556e0928939ada3c4ccd8513"},"components":[{"_id":{"$oid":"556e0928939ada3c4ccd8514"},"component":"Test component"}],"instruction":"Test RecipeStep"}],"structureCreator":"Test structureCreator","structureName":"Test structureName"}]}
+{"__v":0,"_id":{"$oid":"556e09cfa3a971ec4c3016f3"},"recipeCreator":"Test Creator","recipeName":"Test Name","recipeStructure":[{"_id":{"$oid":"556e09cfa3a971ec4c3016f4"},"structure":[{"_id":{"$oid":"556e09cfa3a971ec4c3016f5"},"components":[{"_id":{"$oid":"556e09cfa3a971ec4c3016f6"},"component":"Test component"}],"instruction":"Test RecipeStep"}],"structureCreator":"Test structureCreator","structureName":"Test structureName"}]}

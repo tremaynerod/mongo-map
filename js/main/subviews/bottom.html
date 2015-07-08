@@ -1,10 +1,33 @@
-<h1>Collections</h1>
+<div class="contain">
+	<button ng-click="goToDatabases()" class="btn btn-warning">Databases</button>
+	<!-- <input ng-model="importName" class="importInput"/> -->
 
-<h4 ng-if="displayMessage">{{displayMessage}}</h4>
 
-<div ng-repeat="collection in collections">
-	<span ng-click="useCollection(collection)"> {{ collection.name }} </span> 
-	<button ng-click="deleteCollection(collection)">Delete</button>
-</div>
+
+	<h4 ng-if="!exportPathObj" class="exportDatabaseLabel">Export Database</h4>
+	<button ng-if="exportPathObj" ng-click="exportDatabase(exportPathObj)" class="btn btn-success exportDatabaseButton">Export: {{exportPathObj.name.substr(0,10)}}</button>
+	 <input type="file" class="exportfileInput" webkitdirectory directory  custom-on-change="exportFilePathChanged"/>
+	<!-- <select ng-model="importName" class="importInput" /><option ng-repeat="export in exports">{{export}}</option></select> -->
+
+	
+	<h4 ng-if="!importPathObj" class="importDatabaseLabel">Import Collection</h4>
+	<button ng-if="importPathObj" ng-click="importCollection(importPathObj)" class="btn btn-danger importButton">Import: {{importPathObj.name.substr(0,10)}}</button>
+	<input type="file" class="fileInput" custom-on-change="importFilePathChanged"/>
+
+
+
+
+
+
+
+	<h1>Collections</h1>
+
+	<h4 ng-if="displayMessage" class="message">{{displayMessage}}</h4>
+
+	<div ng-repeat="collection in collections">
+		<span ng-click="useCollection(collection)"> {{ collection.name }} </span> 
+		<button ng-click="deleteCollection(collection)" class="btn btn-danger">Delete</button>
+	</div>
+<div>
 
 <ui-view></ui-view>

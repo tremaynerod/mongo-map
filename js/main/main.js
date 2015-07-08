@@ -27,20 +27,43 @@ app.config(function ($stateProvider) {
 
     $stateProvider.state('items', {
     	url: '/:dbName/:collectionName',
-    	//params: ['collectionName','dbName'],
 	    templateUrl: 'js/main/subviews/items.html',
 	    controller: 'itemsController'
 	});
 });
 
 app.controller('itemsController', function ($scope, $state, $stateParams, MongoDbFactory, $timeout) {
+    $scope.filePathChanged = function(event){
+        $scope.exportPathObj = event.target.files[0];
+        $scope.$digest(); 
+    };
+
+    $scope.exportCollection = function(filePathObj){
+        var rf = require('fs').readFile;
+        var executeCommand = require('child_process').exec;
+
+        var exportPath = filePathObj.path;
+        var command = "mongoexport --db "+ $stateParams.dbName + " --collection "+ $stateParams.collectionName + " --out " + exportPath + "/" + $stateParams.collectionName + ".json";
+        executeCommand(command, function (err, output) {
+
+            $scope.displayMessage = "Collection " + $stateParams.collectionName + " Exported";
+            $timeout(function() {
+                $scope.displayMessage = null;
+            }, 1000); 
+            $scope.$digest();
+        });
+    }
+
 	var ObjectID = require('mongodb').ObjectID;
 	$scope.items;
 	MongoDbFactory.getAllItemsInCollection($stateParams.dbName, $stateParams.collectionName).then(function(items){
 			$scope.items = items;
-
 			$scope.$digest();
 	}).catch(function(e) {console.log(e)});
+
+    $scope.goToCollections = function(){
+        $state.go('collections', {name: $stateParams.dbName});
+    };
 
 	$scope.modifyProp = function(key, val, item){
 		//bug not modifying id's properly		
@@ -50,22 +73,20 @@ app.controller('itemsController', function ($scope, $state, $stateParams, MongoD
 			item[key] = val;
 		}
 		MongoDbFactory.modifyItem($stateParams.dbName, $stateParams.collectionName, item, key).then(function(){
-			//display a message 
 			$scope.displayMessage = "Item Updated";
             $timeout(function() {
                 $scope.displayMessage = null;
-            }, 2000); 
-
+            }, 1000); 
+            $scope.$digest();
 		});
 	};
 
 	$scope.deleteItem = function(item){
 		MongoDbFactory.deleteItem($stateParams.dbName, $stateParams.collectionName, item).then(function(){
-			//display a message
 			$scope.displayMessage = "Item Deleted";
             $timeout(function() {
                 $scope.displayMessage = null;
-            }, 2000); 
+            }, 1000); 
 
 
 			MongoDbFactory.getAllItemsInCollection($stateParams.dbName, $stateParams.collectionName).then(function(items){
@@ -77,13 +98,11 @@ app.controller('itemsController', function ($scope, $state, $stateParams, MongoD
 	};
 
 	$scope.deleteProp = function(key, val, item){
-		MongoDbFactory.deleteProp($stateParams.dbName, $stateParams.collectionName, item, key).then(function(){
-			
-			//display a message 
+		MongoDbFactory.deleteProp($stateParams.dbName, $stateParams.collectionName, item, key).then(function(){			
 			$scope.displayMessage = "Document Removed";
             $timeout(function() {
                 $scope.displayMessage = null;
-            }, 2000); 
+            }, 1000); 
 
 			MongoDbFactory.getAllItemsInCollection($stateParams.dbName, $stateParams.collectionName).then(function(items){
 				$scope.items = items;
@@ -94,8 +113,16 @@ app.controller('itemsController', function ($scope, $state, $stateParams, MongoD
 		}).catch(function(e) {console.log(e)});
 	};
 });
+/*
+app.controller('CollectionsTopController', function ($scope, $state, $stateParams, MongoDbFactory) {
 
-app.controller('CollectionsTopController', function ($scope, $state, $stateParams) {
+	MongoDbFactory.getCollections($stateParams.name).then(function(collections){
+		//$scope.collections = collections;
+		console.log(collections);
+		
+		$scope.$digest();
+	}).catch(function(e) {console.log(e)});
+
 
 
 	var color = 'gray';
@@ -186,17 +213,85 @@ app.controller('CollectionsTopController', function ($scope, $state, $stateParam
 
 
 });
+*/
+
 
 //display message
 //maybe adding ability if time
 //mongo import if time
 
 app.controller('CollectionsBottomController', function ($scope, $state, $stateParams, MongoDbFactory, $timeout) {
-	$scope.collections;
+	var rf = require('fs').readFile;
+    var executeCommand = require('child_process').exec;
+
 	MongoDbFactory.getCollections($stateParams.name).then(function(collections){
 		$scope.collections = collections;
 		$scope.$digest();
 	}).catch(function(e) {console.log(e)});
+
+    $scope.importFilePathChanged = function(event){
+        $scope.importPathObj = event.target.files[0];
+        $scope.$digest(); 
+    };
+
+    $scope.exportFilePathChanged = function(event){
+        $scope.exportPathObj = event.target.files[0];
+        $scope.$digest(); 
+    };
+
+    $scope.importCollection = function(importPathObj){
+
+        var collectionName = importPathObj.name;
+        var importPath = importPathObj.path;
+
+        var command = "mongoimport --db "+ $stateParams.name + " --collection " + collectionName.split('.json')[0] + " --file " + importPath; //+ ".json";
+        executeCommand(command, function (err, output) {            
+            $scope.displayMessage = "Collection " + collectionName + " Imported";
+            $timeout(function() {
+                $scope.displayMessage = null;
+            }, 1000); 
+            
+            MongoDbFactory.getCollections($stateParams.name).then(function(collections){
+                $scope.collections = collections;
+                $scope.$digest();
+            }).catch(function(e) {console.log(e)});
+        });
+    };
+
+    $scope.exportDatabase = function(exportPathObj){
+        var Promise = require('bluebird');
+        var rf = require('fs').readFile;
+        var childProccess = require('child_process');
+
+        var exportPath = exportPathObj.path;
+
+        var commandsArr = [];
+        $scope.collections.forEach(function(collection){   
+            if(collection.name !== "system.indexes")         
+                commandsArr.push("mongoexport --db "+ $stateParams.name + " --collection " + collection.name + " --out " + exportPath + "/" + $stateParams.name + "/" + collection.name + ".json");
+        });
+
+        commandsArr.map(function execAndPromisify(command) { 
+            var executeCommand = Promise.promisify(childProccess.exec)                   
+            return executeCommand.call(childProccess, command).then(function(err, output){
+                return output;
+            }); 
+        });
+        var databaseExported = Promise.all(commandsArr);
+
+        databaseExported.then(function(){
+            $scope.displayMessage = "Database " + $stateParams.name + " Exported";
+            $timeout(function() {
+                $scope.displayMessage = null;
+            }, 1000); 
+            $scope.$digest();
+        });  
+    };
+
+
+    $scope.goToDatabases = function(){
+        $state.go('main');
+    };
 
 	$scope.useCollection = function(collection){
 		$state.go('items', {dbName: $stateParams.name, collectionName: collection.name});
@@ -204,11 +299,10 @@ app.controller('CollectionsBottomController', function ($scope, $state, $statePa
 
 	$scope.deleteCollection = function(collection){
 		MongoDbFactory.deleteCollection($stateParams.name, collection.name).then(function(){
-			//display a message
 			$scope.displayMessage = "Collection Deleted";
             $timeout(function() {
                 $scope.displayMessage = null;
-            }, 2000); 
+            }, 1000); 
 
 			MongoDbFactory.getCollections($stateParams.name).then(function(collections){
 				$scope.collections = collections;
@@ -219,12 +313,61 @@ app.controller('CollectionsBottomController', function ($scope, $state, $statePa
 });
 
 app.controller('MainController', function ($scope, $state, MongoDbFactory, $timeout) {
+    var rf = require('fs').readFile;
+    var executeCommand = require('child_process').exec;
+    var Promise = require('bluebird');
+    var childProccess = require('child_process');
+
 	$scope.dbsArr;
+    $scope.importPathObj = null;
 
 	MongoDbFactory.getAllDatabases().then(function(dbsListObj){
 		$scope.dbsArr = dbsListObj.databases;
 		$scope.$digest();
 	}).catch(function(e) {console.log(e)});
+
+    $scope.filePathChanged = function(event){
+        $scope.importPathObj = event.target.files[0];
+        $scope.$digest(); 
+    };
+
+    $scope.importDatabase = function(filePathObj){   
+        var dbName = filePathObj.name;
+        var path = filePathObj.path;
+        console.log(path);
+        var executeCommand = Promise.promisify(childProccess.exec); 
+        executeCommand.call(childProccess, "ls " + path).then(function(output){         
+            var outputArr = output[0].split('\n');
+            outputArr.pop(); 
+            return outputArr;
+        })
+        .then(function(collections){
+            var commandsArr = [];
+            collections.forEach(function(collection){  
+                commandsArr.push("mongoimport --db "+ dbName + " --collection "+ collection.split('.json')[0] + " --file " + path + "/" + collection);
+                //commandsArr.push("mongoimport --db "+ dbName + " --collection "+ collection.split('.json')[0] + " --file exports/databases/" + dbName + "/" + collection);
+            });
+            
+            commandsArr.map(function execAndPromisify(command) { 
+                var executeCommand = Promise.promisify(childProccess.exec)                   
+                return executeCommand.call(childProccess, command).then(function(err, output){
+                    return output;
+                }); 
+            });
+
+            var databaseImported = Promise.all(commandsArr);
+            databaseImported.then(function(){
+                MongoDbFactory.getAllDatabases().then(function(dbsListObj){
+                    $scope.dbsArr = dbsListObj.databases;
+                    $scope.displayMessage = "Database " + dbName + " Imported";
+                    $timeout(function() {
+                        $scope.displayMessage = null;
+                    }, 1000); 
+                    $scope.$digest();
+                }).catch(function(e) {console.log(e)});
+            });
+        });  
+    };
 
 	$scope.useDatabase = function(db){
 		$state.go('collections', {name: db.name});
@@ -232,11 +375,10 @@ app.controller('MainController', function ($scope, $state, MongoDbFactory, $time
 
 	$scope.deleteDatabase = function(db){
 		MongoDbFactory.deleteDatabase(db.name).then(function(){
-			//display a message 
 			$scope.displayMessage = "Database Deleted";
             $timeout(function() {
                 $scope.displayMessage = null;
-            }, 2000); 
+            }, 1000); 
 
 			MongoDbFactory.getAllDatabases().then(function(dbsListObj){
 				$scope.dbsArr = dbsListObj.databases;
